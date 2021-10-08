@@ -307,7 +307,7 @@ def trainmodel(X,Y,drug_name):
         print('confusion_matrix：\n')
         print(confusion_matrix(y_test_true,y_pred_true))
             
-    # 绘制三种方法都在一起的ROC曲线
+    # Draw ROC cruves
     RFmodel = load('/path/to/pkl_dir/'+ drug_name +'_RF_clf.pkl') 
     y_RF_score=RFmodel.predict_proba(X_val)
     print(y_RF_score)
