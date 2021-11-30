@@ -1,0 +1,2 @@
+fastp -i /path/to/read1 -I /path/to/read2 -o /path/to/clean_dir/isolate_name.clean.r1.fq.gz -O /path/to/clean_dir/isolate_name.clean.r2.fq.gz \
+        -5 -3 -j /path/to/clean_dir/isolate_name.json -h/path/to/clean_dir/isolate_name.html

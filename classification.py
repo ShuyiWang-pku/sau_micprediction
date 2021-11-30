@@ -223,7 +223,7 @@ def trainmodel(X,Y,drug_name):
         
         # RandomForest
         print('--------RandomForest--------')
-        treenumber = [100,200,300,400,500,600]
+        treenumber = [600]
         for i in range(6):
             n_estimators_tmp = treenumber[i]
             print('---Treenumer: ---',n_estimators_tmp)
@@ -241,7 +241,10 @@ def trainmodel(X,Y,drug_name):
             y_pred_true = np.argmax(y_pred,axis = 1) 
             print('predit_label: ', y_pred_true)
             print('confusion_matrix：\n')
-            print(confusion_matrix(y_val_true,y_pred_true))            
+            print(confusion_matrix(y_val_true,y_pred_true))      
+            RF_fpr,RF_tpr,RF_roc_auc = countROCAUC(y_val,y_RF_score,drug_name,'RandomForest',n_classes)
+            print('micro:',RF_roc_auc["micro"])
+            print()
         
         # SVM
         print('--------SVM--------')
@@ -260,6 +263,8 @@ def trainmodel(X,Y,drug_name):
         print('predit_label: ', y_pred_true)
         print('confusion_matrix：\n')
         print(confusion_matrix(y_val_true,y_pred_true))
+        svmlinear_fpr,svmlinear_tpr,svmlinear_roc_auc = countROCAUC(y_val,y_RF_score,drug_name,'SVM-linear',n_classes)
+        print('micro:',svmlinear_roc_auc["micro"])
         
         
         print('SVM-poly: ',clfpoly.score(X_val, y_val))
@@ -270,6 +275,8 @@ def trainmodel(X,Y,drug_name):
         print('predit_label: ', y_pred_true)
         print('confusion_matrix：\n')
         print(confusion_matrix(y_val_true,y_pred_true))
+        svmpoly_fpr,svmpoly_tpr,svmpoly_roc_auc = countROCAUC(y_val,y_RF_score,drug_name,'SVM-poly',n_classes)
+        print('micro:',svmpoly_roc_auc["micro"])
         if clfpoly.score(X_val, y_val) > acc or tag == 1:
             acc = clfpoly.score(X_val, y_val)
             joblib.dump(clfpoly, '/path/to/pkl_dir/'+ drug_name +'_SVMpoly_clf.pkl')
@@ -282,6 +289,8 @@ def trainmodel(X,Y,drug_name):
         print('predit_label: ', y_pred_true)
         print('confusion_matrix：\n')
         print(confusion_matrix(y_val_true,y_pred_true))
+        svmrbf_fpr,svmrbf_tpr,svmrbf_roc_auc = countROCAUC(y_val,y_RF_score,drug_name,'SVM-rbf',n_classes)
+        print('micro:',svmrbf_roc_auc["micro"])
         if clfrbf.score(X_val, y_val) > acc or tag == 1:
             acc = clfrbf.score(X_val, y_val)
             joblib.dump(clfrbf, '/path/to/pkl_dir/'+ drug_name +'_SVMrbf_clf.pkl')
@@ -306,8 +315,10 @@ def trainmodel(X,Y,drug_name):
         y_pred_true = np.argmax(y_preds,axis = 1) 
         print('confusion_matrix：\n')
         print(confusion_matrix(y_test_true,y_pred_true))
+        XGBoost_fpr,XGBoost_tpr,XGBoost_roc_auc = countROCAUC(y_test,y_XGB_score,drug_name,'XGBoost-binary-logistic',n_classes)
+        print('micro:',XGBoost_roc_auc["micro"])
             
-    # Draw ROC cruves
+    # Draw the ROC curve of the three methods together
     RFmodel = load('/path/to/pkl_dir/'+ drug_name +'_RF_clf.pkl') 
     y_RF_score=RFmodel.predict_proba(X_val)
     print(y_RF_score)
@@ -335,7 +346,7 @@ def trainmodel(X,Y,drug_name):
     y_XGB_score=XGBmodel.predict(X_test)
     XGBoost_fpr,XGBoost_tpr,XGBoost_roc_auc = countROCAUC(y_test,y_XGB_score,drug_name,'XGBoost-binary-logistic',n_classes)
     print('micro:',XGBoost_roc_auc["micro"])
-    print('macro:',XGBoost_roc_auc["macro"])
+
     
     #print picture
     plt.figure()
