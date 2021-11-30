@@ -224,7 +224,7 @@ def trainmodel(X,Y,drug_name):
         # RandomForest
         print('--------RandomForest--------')
         treenumber = [600]
-        for i in range(6):
+        for i in range(1):
             n_estimators_tmp = treenumber[i]
             print('---Treenumer: ---',n_estimators_tmp)
             model = OneVsRestClassifier(RandomForestClassifier(n_estimators=n_estimators_tmp, n_jobs = -1))
